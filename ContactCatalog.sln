@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.36603.0 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactCatalog", "ContactCatalog\ContactCatalog.csproj", "{6FC6D000-C989-41EA-B503-00B1C9FE0F8A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactCatalog.Tests", "ContactCatalog.Tests\ContactCatalog.Tests.csproj", "{AB9FCBF2-4A2F-7426-F3EC-883E37F9659F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{6FC6D000-C989-41EA-B503-00B1C9FE0F8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FC6D000-C989-41EA-B503-00B1C9FE0F8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FC6D000-C989-41EA-B503-00B1C9FE0F8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB9FCBF2-4A2F-7426-F3EC-883E37F9659F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB9FCBF2-4A2F-7426-F3EC-883E37F9659F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB9FCBF2-4A2F-7426-F3EC-883E37F9659F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB9FCBF2-4A2F-7426-F3EC-883E37F9659F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
