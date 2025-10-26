@@ -1,5 +1,6 @@
 ﻿using ContactCatalog.Models;
 using ContactCatalog.Services;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -18,19 +19,20 @@ namespace ContactCatalog.Tests
             var mockRepo = new Mock<IContactRepository>();
             mockRepo.Setup(r => r.GetAll()).Returns(new[]
             {
-                new Contact { Id = 1, Name = "John", Email = "j@test.com", Tags = new List<string> {"friend"} },
-                new Contact { Id = 2, Name = "Bo", Email = "bo@test.com", Tags = new List<string> { "work" } },
-                new Contact { Id = 3, Name = "Cecilia", Email = "cecilia@test.com", Tags = new List<string> { "friend", "gym" } }
-            });
+            new Contact { Id = 1, Name = "Anna", Email = "anna@example.com", Tags = new List<string> { "friend" } },
+            new Contact { Id = 2, Name = "Bo", Email = "bo@example.com", Tags = new List<string> { "work" } },
+            new Contact { Id = 3, Name = "Cecilia", Email = "cecilia@example.com", Tags = new List<string> { "friend", "gym" } }
+        });
 
-            var service = new ContactService(mockRepo.Object);
+            var mockLogger = new Mock<ILogger<ContactService>>();
+            var service = new ContactService(mockRepo.Object, mockLogger.Object);
 
             // Act
             var result = service.FilterByTag("friend").ToList();
 
             // Assert
             Assert.Equal(2, result.Count);
-            Assert.Contains(result, c => c.Name == "John");
+            Assert.Contains(result, c => c.Name == "Anna");
             Assert.Contains(result, c => c.Name == "Cecilia");
             Assert.DoesNotContain(result, c => c.Name == "Bo");
         }
