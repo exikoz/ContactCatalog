@@ -1,10 +1,13 @@
-﻿using System;
+﻿using ContactCatalog.Models;
+using ContactCatalog.Validators;
+using ContactCatalog.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ContactCatalog
+namespace ContactCatalog.Services
 {
     public class ContactRepository : IContactRepository
     {
