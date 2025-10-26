@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ContactCatalog
+namespace ContactCatalog.Models
 {
     public class Contact
     {
