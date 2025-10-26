@@ -1,4 +1,5 @@
 ﻿using ContactCatalog.Services;
+using ContactCatalog.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,16 +10,18 @@ namespace ContactCatalog
 {
     public class Application
     {
-        private ContactService _service;
+        private readonly ContactService _service;
+        private readonly ConsoleMenu _menu;
 
         public Application()
         {
             var repository = new ContactRepository();
             _service = new ContactService(repository);
+            _menu = new ConsoleMenu(_service);
         }
         public void Run()
         {
-            Console.WriteLine("=== Contact Catalog ===\n");
+            _menu.Run();
 
         }
     }

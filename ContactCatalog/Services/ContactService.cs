@@ -10,7 +10,7 @@ namespace ContactCatalog.Services
     public class ContactService
     {
         private readonly IContactRepository _repository;
-
+        // DI
         public ContactService(IContactRepository repository)
         {
             _repository = repository;
