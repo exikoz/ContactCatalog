@@ -72,11 +72,20 @@ namespace ContactCatalog.UI
             while (true)
             {
                 Console.Write("Id: ");
-                if (int.TryParse(Console.ReadLine(), out id))
+                if (!int.TryParse(Console.ReadLine(), out id))
                 {
-                    break;
+                    ConsoleHelper.WriteError("Invalid ID. Please enter a number.");
+                    continue;
                 }
-                ConsoleHelper.WriteError("Invalid ID. Please enter a number.");
+
+                // Check for duplicate ID immediately
+                if (_service.GetAllContacts().Any(c => c.Id == id))
+                {
+                    ConsoleHelper.WriteError($"Contact with ID {id} already exists. Please use a different ID.");
+                    continue;
+                }
+
+                break;
             }
 
             Console.Write("Name: ");
@@ -97,6 +106,13 @@ namespace ContactCatalog.UI
                 if (!EmailValidator.IsValidEmail(email))
                 {
                     ConsoleHelper.WriteError("Invalid email format. Please try again.");
+                    continue;
+                }
+
+                // Check for duplicate email immediately
+                if (_service.GetAllContacts().Any(c => c.Email.Equals(email, StringComparison.OrdinalIgnoreCase)))
+                {
+                    ConsoleHelper.WriteError($"Email '{email}' already exists. Please use a different email.");
                     continue;
                 }
 
@@ -121,6 +137,10 @@ namespace ContactCatalog.UI
             {
                 _service.AddContact(contact);
                 ConsoleHelper.WriteSuccess("\n[Added!] Contact added successfully.");
+            }
+            catch (DuplicateIdException ex)
+            {
+                ConsoleHelper.WriteError($"\n[Error] {ex.Message}");
             }
             catch (DuplicationEmailException ex)
             {

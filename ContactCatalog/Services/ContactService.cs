@@ -1,43 +1,56 @@
 ﻿using ContactCatalog.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
-namespace ContactCatalog.Services
+namespace ContactCatalog.Services;
+
+public class ContactService
 {
-    public class ContactService
+    private readonly IContactRepository _repository;
+    private readonly ILogger<ContactService> _logger;
+
+    public ContactService(IContactRepository repository, ILogger<ContactService> logger)
     {
-        private readonly IContactRepository _repository;
-        // DI
-        public ContactService(IContactRepository repository)
-        {
-            _repository = repository;
-        }
+        _repository = repository;
+        _logger = logger;
+    }
 
-        public void AddContact(Contact contact)
-        {
-            _repository.Add(contact);
-        }
+    public void AddContact(Contact contact)
+    {
+        _logger.LogInformation("ContactService: Adding contact {Name}", contact.Name);
+        _repository.Add(contact);
+    }
 
-        public IEnumerable<Contact> GetAllContacts()
-        {
-            return _repository.GetAll();
-        }
+    public IEnumerable<Contact> GetAllContacts()
+    {
+        _logger.LogInformation("ContactService: Getting all contacts");
+        return _repository.GetAll();
+    }
 
-        public IEnumerable<Contact> SearchByName(string searchTerm)
-        {
-            return _repository.GetAll()
-                .Where(c => c.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
-                .OrderBy(c => c.Name);
-        }
+    public IEnumerable<Contact> SearchByName(string searchTerm)
+    {
+        _logger.LogInformation("ContactService: Searching contacts by name containing '{SearchTerm}'", searchTerm);
 
-        public IEnumerable<Contact> FilterByTag(string tag)
-        {
-            return _repository.GetAll()
-                .Where(c => c.Tags.Contains(tag, StringComparer.OrdinalIgnoreCase))
-                .OrderBy(c => c.Name);
-        }
+        var results = _repository.GetAll()
+            .Where(c => c.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(c => c.Name);
+
+        var resultList = results.ToList();
+        _logger.LogInformation("Search found {Count} match(es)", resultList.Count);
+
+        return resultList;
+    }
+
+    public IEnumerable<Contact> FilterByTag(string tag)
+    {
+        _logger.LogInformation("ContactService: Filtering contacts by tag '{Tag}'", tag);
+
+        var results = _repository.GetAll()
+            .Where(c => c.Tags.Contains(tag, StringComparer.OrdinalIgnoreCase))
+            .OrderBy(c => c.Name);
+
+        var resultList = results.ToList();
+        _logger.LogInformation("Filter found {Count} contact(s) with tag '{Tag}'", resultList.Count, tag);
+
+        return resultList;
     }
 }

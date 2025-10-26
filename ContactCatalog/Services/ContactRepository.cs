@@ -1,47 +1,71 @@
 ﻿using ContactCatalog.Models;
-using ContactCatalog.Validators;
 using ContactCatalog.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ContactCatalog.Validators;
+using Microsoft.Extensions.Logging;
 
-namespace ContactCatalog.Services
+namespace ContactCatalog.Services;
+
+public class ContactRepository : IContactRepository
 {
-    public class ContactRepository : IContactRepository
+    private readonly Dictionary<int, Contact> _contactsById;
+    private readonly HashSet<string> _emails;
+    private readonly ILogger<ContactRepository> _logger;
+
+    public ContactRepository(ILogger<ContactRepository> logger)
     {
-        private readonly Dictionary<int, Contact> _contactsById;
-        private readonly HashSet<string> _emails;
+        _contactsById = new Dictionary<int, Contact>();
+        _emails = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        _logger = logger;
+    }
 
-        public ContactRepository()
+    public void Add(Contact contact)
+    {
+        _logger.LogInformation("Attempting to add contact with ID {Id} and email {Email}", contact.Id, contact.Email);
+
+        if (_contactsById.ContainsKey(contact.Id))
         {
-            _contactsById = new Dictionary<int, Contact>();
-            _emails = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            _logger.LogWarning("Duplicate ID detected: {Id}", contact.Id);
+            throw new DuplicateIdException(contact.Id);
         }
 
-        public void Add(Contact contact)
+        if (!EmailValidator.IsValidEmail(contact.Email))
         {
-            if (!EmailValidator.IsValidEmail(contact.Email)) {
-                throw new InvalidEmailException(contact.Email);
-            }
-
-            if (!_emails.Add(contact.Email)) {
-                throw new DuplicateWaitObjectException(contact.Email);
-            }
-
-            _contactsById.Add(contact.Id, contact);
+            _logger.LogWarning("Invalid email format: {Email}", contact.Email);
+            throw new InvalidEmailException(contact.Email);
         }
 
-        public IEnumerable<Contact> GetAll()
+        if (!_emails.Add(contact.Email))
         {
-            return _contactsById.Values;
+            _logger.LogWarning("Duplicate email detected: {Email}", contact.Email);
+            throw new DuplicationEmailException(contact.Email);
         }
 
-        public Contact? GetById(int id)
+        if (_contactsById.ContainsKey(contact.Id))
         {
-            _contactsById.TryGetValue(id, out var contact);
-            return contact;
+            _logger.LogWarning("Duplicate ID detected: {Id}", contact.Id);
+            throw new DuplicateIdException(contact.Id);
         }
+
+        _contactsById.Add(contact.Id, contact);
+        _logger.LogInformation("Successfully added contact: {Name} ({Id})", contact.Name, contact.Id);
+    }
+
+    public IEnumerable<Contact> GetAll()
+    {
+        _logger.LogInformation("Retrieving all contacts. Total count: {Count}", _contactsById.Count);
+        return _contactsById.Values;
+    }
+
+    public Contact? GetById(int id)
+    {
+        _logger.LogInformation("Searching for contact with ID {Id}", id);
+        _contactsById.TryGetValue(id, out var contact);
+
+        if (contact == null)
+        {
+            _logger.LogWarning("Contact with ID {Id} not found", id);
+        }
+
+        return contact;
     }
 }

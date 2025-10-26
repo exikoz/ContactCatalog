@@ -1,28 +1,39 @@
 ﻿using ContactCatalog.Services;
 using ContactCatalog.UI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
-namespace ContactCatalog
+namespace ContactCatalog;
+
+public class Application
 {
-    public class Application
+    private readonly ContactService _service;
+    private readonly ConsoleMenu _menu;
+    private readonly ILogger<Application> _logger;
+
+    public Application()
     {
-        private readonly ContactService _service;
-        private readonly ConsoleMenu _menu;
-
-        public Application()
+        // Setup logging
+        using var loggerFactory = LoggerFactory.Create(builder =>
         {
-            var repository = new ContactRepository();
-            _service = new ContactService(repository);
-            _menu = new ConsoleMenu(_service);
-        }
-        public void Run()
-        {
-            _menu.Run();
+            builder.AddConsole();
+            builder.SetMinimumLevel(LogLevel.Information);
+        });
 
-        }
+        _logger = loggerFactory.CreateLogger<Application>();
+        var repositoryLogger = loggerFactory.CreateLogger<ContactRepository>();
+        var serviceLogger = loggerFactory.CreateLogger<ContactService>();
+
+        // Create dependencies with logging
+        var repository = new ContactRepository(repositoryLogger);
+        _service = new ContactService(repository, serviceLogger);
+        _menu = new ConsoleMenu(_service);
+
+        _logger.LogInformation("Application started");
+    }
+
+    public void Run()
+    {
+        _menu.Run();
+        _logger.LogInformation("Application stopped");
     }
 }
