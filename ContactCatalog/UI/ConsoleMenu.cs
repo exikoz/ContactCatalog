@@ -21,7 +21,7 @@ namespace ContactCatalog.UI
 
         public void Run()
         {
-            while(true)
+            while (true)
             {
 
                 Console.Clear();
@@ -66,7 +66,7 @@ namespace ContactCatalog.UI
 
         private void AddContact()
         {
-            Console.WriteLine("=== Add Contact ===\n");
+            ConsoleHelper.WriteHeader("=== Add Contact ===\n");
 
             int id;
             while (true)
@@ -76,7 +76,7 @@ namespace ContactCatalog.UI
                 {
                     break;
                 }
-                Console.WriteLine("Invalid ID. Please enter a number.");
+                ConsoleHelper.WriteError("Invalid ID. Please enter a number.");
             }
 
             Console.Write("Name: ");
@@ -90,13 +90,13 @@ namespace ContactCatalog.UI
 
                 if (string.IsNullOrWhiteSpace(email))
                 {
-                    Console.WriteLine("Email cannot be empty.");
+                    ConsoleHelper.WriteError("Email cannot be empty.");
                     continue;
                 }
 
                 if (!EmailValidator.IsValidEmail(email))
                 {
-                    Console.WriteLine("Invalid email format. Please try again.");
+                    ConsoleHelper.WriteError("Invalid email format. Please try again.");
                     continue;
                 }
 
@@ -120,15 +120,15 @@ namespace ContactCatalog.UI
             try
             {
                 _service.AddContact(contact);
-                Console.WriteLine("\n[Added!] Contact added successfully.");
+                ConsoleHelper.WriteSuccess("\n[Added!] Contact added successfully.");
             }
             catch (DuplicationEmailException ex)
             {
-                Console.WriteLine($"\n[Error] {ex.Message}");
+                ConsoleHelper.WriteError($"\n[Error] {ex.Message}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"\n[Error] {ex.Message}");
+                ConsoleHelper.WriteError($"\n[Error] {ex.Message}");
             }
 
             PressAnyKeyToContinue();
@@ -136,20 +136,20 @@ namespace ContactCatalog.UI
 
         private void ListContacts()
         {
-            Console.WriteLine("=== All Contacts ===\n");
+            ConsoleHelper.WriteHeader("=== All Contacts ===\n");
 
             var contacts = _service.GetAllContacts().ToList();
 
             if (contacts.Count == 0)
             {
-                Console.WriteLine("No contacts in catalog.");
+                ConsoleHelper.WriteError("No contacts in catalog.");
             }
             else
             {
                 Console.WriteLine($"{contacts.Count} contact(s):");
                 foreach (var contact in contacts)
                 {
-                    Console.WriteLine($"- {contact}");
+                    ConsoleHelper.WriteInfo($"- {contact}");
                 }
             }
 
@@ -158,7 +158,7 @@ namespace ContactCatalog.UI
 
         private void SearchContacts()
         {
-            Console.WriteLine("=== Search by Name ===\n");
+            ConsoleHelper.WriteHeader("=== Search by Name ===\n");
 
             Console.Write("Search term for name: ");
             var searchTerm = Console.ReadLine() ?? "";
@@ -167,14 +167,14 @@ namespace ContactCatalog.UI
 
             if (results.Count == 0)
             {
-                Console.WriteLine("\nNo matches found.");
+                ConsoleHelper.WriteError("\nNo matches found.");
             }
             else
             {
                 Console.WriteLine($"\n{results.Count} match(es):");
                 foreach (var contact in results)
                 {
-                    Console.WriteLine($"- {contact}");
+                    ConsoleHelper.WriteInfo($"- {contact}");
                 }
             }
 
@@ -183,7 +183,7 @@ namespace ContactCatalog.UI
 
         private void FilterByTag()
         {
-            Console.WriteLine("=== Filter by Tag ===\n");
+            ConsoleHelper.WriteHeader("=== Filter by Tag ===\n");
 
             Console.Write("Tag: ");
             var tag = Console.ReadLine() ?? "";
@@ -192,14 +192,14 @@ namespace ContactCatalog.UI
 
             if (results.Count == 0)
             {
-                Console.WriteLine("\nNo contacts with that tag.");
+                ConsoleHelper.WriteError("\nNo contacts with that tag.");
             }
             else
             {
                 Console.WriteLine($"\n{results.Count} contact(s) with tag '{tag}':");
                 foreach (var contact in results)
                 {
-                    Console.WriteLine($"- {contact}");
+                    ConsoleHelper.WriteInfo($"- {contact}");
                 }
             }
 
