@@ -11,7 +11,7 @@ A console-based contact management application built with C# and .NET 8.
 
 1. Clone the repository
 ```bash
-   git clone <your-repo-url>
+   git https://github.com/exikoz/ContactCatalog.git
    cd ContactCatalog
 ```
 
