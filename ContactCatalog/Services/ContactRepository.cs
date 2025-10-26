@@ -40,11 +40,6 @@ public class ContactRepository : IContactRepository
             throw new DuplicationEmailException(contact.Email);
         }
 
-        if (_contactsById.ContainsKey(contact.Id))
-        {
-            _logger.LogWarning("Duplicate ID detected: {Id}", contact.Id);
-            throw new DuplicateIdException(contact.Id);
-        }
 
         _contactsById.Add(contact.Id, contact);
         _logger.LogInformation("Successfully added contact: {Name} ({Id})", contact.Name, contact.Id);

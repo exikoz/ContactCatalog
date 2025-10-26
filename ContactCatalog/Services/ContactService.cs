@@ -1,5 +1,6 @@
 ﻿using ContactCatalog.Models;
 using Microsoft.Extensions.Logging;
+using System.Text;
 
 namespace ContactCatalog.Services;
 
@@ -52,5 +53,37 @@ public class ContactService
         _logger.LogInformation("Filter found {Count} contact(s) with tag '{Tag}'", resultList.Count, tag);
 
         return resultList;
+    }
+
+    public void ExportToCsv(string filePath)
+    {
+        _logger.LogInformation("ContactService: Exporting contacts to CSV file '{FilePath}'", filePath);
+
+        var contacts = _repository.GetAll().ToList();
+
+        if (contacts.Count == 0)
+        {
+            _logger.LogWarning("No contacts to export");
+            throw new InvalidOperationException("No contacts to export");
+        }
+
+        var csv = ToCsv(contacts);
+        File.WriteAllText(filePath, csv);
+
+        _logger.LogInformation("Successfully exported {Count} contact(s) to '{FilePath}'", contacts.Count, filePath);
+    }
+
+    private string ToCsv(IEnumerable<Contact> contacts)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine("Id,Name,Email,Tags");
+
+        foreach (var contact in contacts)
+        {
+            var tags = string.Join('|', contact.Tags);
+            sb.AppendLine($"{contact.Id},{contact.Name},{contact.Email},{tags}");
+        }
+
+        return sb.ToString();
     }
 }

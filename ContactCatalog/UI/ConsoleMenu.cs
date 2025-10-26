@@ -43,6 +43,9 @@ namespace ContactCatalog.UI
                     case "4":
                         FilterByTag();
                         break;
+                    case "5":
+                        ExportToCsv();
+                        break;
                     case "0":
                         Console.WriteLine("Exiting...");
                         return;
@@ -60,6 +63,7 @@ namespace ContactCatalog.UI
             Console.WriteLine("2) List");
             Console.WriteLine("3) Search (Name contains)");
             Console.WriteLine("4) Filter by Tag");
+            Console.WriteLine("5) Export CSV");
             Console.WriteLine("0) Exit");
             Console.Write("> ");
         }
@@ -230,6 +234,42 @@ namespace ContactCatalog.UI
         {
             Console.WriteLine("\nPress any key to continue...");
             Console.ReadKey(true);
+        }
+
+        private void ExportToCsv()
+        {
+            ConsoleHelper.WriteHeader("=== Export to CSV ===\n");
+
+            // Default to Desktop
+            var defaultPath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                "contacts.csv"
+            );
+
+            Console.WriteLine($"Default path: {defaultPath}");
+            Console.Write("Press Enter to use default, or type a custom path: ");
+            var input = Console.ReadLine() ?? "";
+
+            var filePath = string.IsNullOrWhiteSpace(input) ? defaultPath : input;
+
+            try
+            {
+                _service.ExportToCsv(filePath);
+
+                var fullPath = Path.GetFullPath(filePath);
+                ConsoleHelper.WriteSuccess($"\n[Export complete] Contacts exported to:");
+                ConsoleHelper.WriteInfo($"{fullPath}");
+            }
+            catch (InvalidOperationException ex)
+            {
+                ConsoleHelper.WriteError($"\n[Error] {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                ConsoleHelper.WriteError($"\n[Error] Failed to export: {ex.Message}");
+            }
+
+            PressAnyKeyToContinue();
         }
 
     }
