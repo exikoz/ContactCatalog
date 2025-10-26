@@ -5,7 +5,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ContactCatalog
+namespace ContactCatalog.Validators
 {
     
     public static class EmailValidator
